@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../frontoffice/css/discussionroom.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="join-room-container">
+        <h2>Rejoindre un Room Privé</h2>
+        <p>Entrez l'ID de la room et votre identifiant pour rejoindre la discussion.</p>
+
+        <!-- Formulaire pour rejoindre la room -->
+        <form id="join-room-form">
+            <label for="room-id">ID de la Room :</label>
+            <input type="text" id="room-id" required placeholder="Exemple : room123">
+
+            <label for="student-id">Votre Identifiant :</label>
+            <input type="text" id="student-id" required placeholder="Exemple : student001">
+
+            <button type="submit">Rejoindre la Room</button>
+        </form>
+
+        <!-- Message d'attente -->
+        <div id="waiting-message" class="waiting-message" style="display: none;">
+            <p>En attente de l'acceptation du formateur...</p>
+        </div>
+
+        <!-- Message d'erreur -->
+        <div id="join-error" class="error-message" style="display: none;">
+            <p>Erreur : Room non trouvée ou étudiant non autorisé à rejoindre.</p>
+        </div>
+
+        <!-- Chat de la Room -->
+        <div id="chat-room" class="chat-room" style="display: none;">
+            <h3>Vous êtes maintenant dans la Room !</h3>
+            <section class="messages-section">
+                <!-- Messages de la discussion -->
+            </section>
+            <textarea id="message-input" placeholder="Écrivez un message..."></textarea>
+            <button id="send-message">Envoyer</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

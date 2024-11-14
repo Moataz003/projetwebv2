@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../frontoffice/css/message.css">
+    <title>Document</title>
+</head>
+<body>
+    <!-- Conteneur principal -->
+  <div class="container">
+    <!-- Choix de l'utilisateur -->
+    <section id="choice-section">
+        <h2>Que souhaitez-vous faire ?</h2>
+        <div class="choice-buttons">
+            <button id="chat-with-students">Discuter avec des étudiants</button>
+            <button id="join-private-room">Rejoindre une room privée</button>
+        </div>
+    </section>
+
+    <!-- Section pour discuter avec des étudiants -->
+    <section id="student-chat" class="hidden">
+        <h2>Discuter avec un étudiant</h2>
+        <p>Choisissez un étudiant avec qui vous voulez discuter :</p>
+        <select id="etudiants-list">
+            <option value="1">Jane Doe - Niveau 3 - Formation Web</option>
+            <option value="2">John Smith - Niveau 2 - Formation Python</option>
+        </select>
+        <button>Commencer la discussion</button>
+    </section>
+
+    <!-- Section pour rejoindre une room privée -->
+    <section id="private-room" class="hidden">
+        <h2>Room Privée - Formation : Développement Web</h2>
+        <p>Bienvenue dans la salle de discussion privée. Vous pouvez maintenant envoyer des messages !</p>
+        <div class="room-messages">
+            <p><strong>Formateur :</strong> Bienvenue à tous dans la salle de discussion !</p>
+            <p><strong>Jane Doe :</strong> Bonjour, j'ai une question sur l'exercice de la semaine.</p>
+        </div>
+        <div class="message-input">
+            <textarea placeholder="Écrivez votre message ici..."></textarea>
+            <button>Envoyer</button>
+        </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

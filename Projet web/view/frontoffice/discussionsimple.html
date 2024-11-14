@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../frontoffice/css/discussionsimple.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="chat-container">
+
+        <!-- Détails de l'étudiant ou du formateur -->
+        <header class="chat-header">
+            <img src="photo_etudiant.jpg" alt="Photo de l'étudiant" class="student-photo">
+            <div class="student-info">
+                <h2>Nom Prénom de l'étudiant</h2>
+                <p><strong>Formations suivies :</strong></p>
+                <ul>
+                    <li>Formation Web Développement - Formateur A</li>
+                    <li>Formation Python - Formateur B</li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- Messages de la discussion -->
+        <section class="messages-section">
+            <!-- Message reçu (étudiant) -->
+            <div class="message received">
+                <div class="message-content">
+                    <p>Salut, comment ça va ?</p>
+                    <div class="message-actions">
+                        <button class="delete-message">Supprimer</button>
+                        <button class="edit-message">Modifier</button>
+                    </div>
+                </div>
+                <div class="message-info">
+                    <span class="message-time">10:30 AM</span>
+                    <img src="photo_formateur.jpg" alt="Photo du formateur" class="sender-photo">
+                </div>
+            </div>
+
+            <!-- Message envoyé (formateur) -->
+            <div class="message sent">
+                <div class="message-content">
+                    <p>Bonjour, ça va bien merci !</p>
+                    <div class="message-actions">
+                        <button class="delete-message">Supprimer</button>
+                        <button class="edit-message">Modifier</button>
+                    </div>
+                </div>
+                <div class="message-info">
+                    <span class="message-time">10:32 AM</span>
+                    <img src="photo_etudiant.jpg" alt="Photo de l'étudiant" class="sender-photo">
+                </div>
+            </div>
+
+            <!-- Message avec fichier ou image -->
+            <div class="message sent">
+                <div class="message-content">
+                    <div class="file-message">
+                        <img src="image-icon.png" alt="Icône de l'image" class="file-icon"> Photo partagée
+                    </div>
+                    <div class="message-actions">
+                        <button class="delete-message">Supprimer</button>
+                    </div>
+                </div>
+                <div class="message-info">
+                    <span class="message-time">10:35 AM</span>
+                    <img src="photo_etudiant.jpg" alt="Photo de l'étudiant" class="sender-photo">
+                </div>
+            </div>
+        </section>
+
+        <!-- Zone de saisie du message -->
+        <section class="input-section">
+            <textarea id="message-input" placeholder="Écrivez un message..."></textarea>
+            <div class="input-actions">
+                <input type="file" id="file-input" accept="image/*, .pdf, .docx, .txt">
+                <button id="send-message">Envoyer</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
