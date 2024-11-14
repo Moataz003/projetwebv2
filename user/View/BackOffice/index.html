@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <img src="./images/wajahni2.png" alt="Logo" class="logo">
+      <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Course Order</a>
+        <a href="#">Manage Courses</a>
+        <a href="#">Customer Review</a>
+        <a href="#">Settings</a>
+        <a href="#">Payment</a>
+        <a href="#">Accounts</a>
+        <a href="#">Help</a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <input type="text" placeholder="Search...">
+        <div class="profile">Admin</div>
+      </header>
+
+      <section class="content">
+        <!-- Existing Traffic Section -->
+        <div class="card">
+          <h3>Traffic</h3>
+          <canvas id="trafficChart"></canvas>
+        </div>
+      
+        <!-- Existing Order Time Section -->
+        <div class="card">
+          <h3>Order Time</h3>
+          <canvas id="orderTimeChart"></canvas>
+        </div>
+      
+        <!-- Most Ordered Courses Section -->
+        <div class="card">
+          <h3>Most Ordered Courses</h3>
+          <ul>
+            <li>Advanced MERN - $45</li>
+            <li>Advanced HTML Basics - $5</li>
+            <li>Advanced CSS - $8</li>
+            <li>Advanced JavaScript - $10</li>
+          </ul>
+        </div>
+      
+        <!-- New Sales Line Chart Section -->
+        <div class="card">
+          <h3>Sales Over Time</h3>
+          <canvas id="salesChart"></canvas>
+        </div>
+      
+        <!-- New Course Ratings Doughnut Chart Section -->
+        <div class="card">
+          <h3>Course Ratings Distribution</h3>
+          <canvas id="ratingsChart"></canvas>
+        </div>
+      
+        <!-- New Category Performance Radar Chart Section -->
+        <div class="card">
+          <h3>Category Performance</h3>
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/script.js"></script>
+</body>
+</html>
