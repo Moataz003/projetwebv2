@@ -47,7 +47,6 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`Id_user`, `Nom`, `Prenom`, `Age`, `Ville`, `Num_tel`, `Email`, `Role`, `password`, `img`) VALUES
 (13, 'user2', 'azer', 22, 'el', 98765432, 'zaidiilyes15@gmail.com', 'Administrateur', '908c9a17973cb4ad614c657939d888d1', '../uploads/golf6.jpg'),
 (14, 'Ines', 'Azer', 20, 'tu', 12345678, 'ines@gmail.com', 'Administrateur', '12345678', '../uploads/download.jpg'),
-(15, 'brahmi', 'oumaima', 22, 'tunis', 97795777, 'ououbrahmi@gmail.com', 'User', '202cb962ac59075b964b07152d234b70', 'C:/xampp/htdocs/oumaima/Views/uploadsbig03.jpg');
 
 --
 -- Indexes for dumped tables
