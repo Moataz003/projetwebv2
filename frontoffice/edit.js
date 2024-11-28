@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-   
+    
     document.getElementById('Nom').addEventListener('keyup', validateNom);
     document.getElementById('Prenom').addEventListener('keyup', validatePrenom);
     document.getElementById('Age').addEventListener('keyup', validateAge);
     document.getElementById('Num_tel').addEventListener('keyup', validateNumTel);
     document.getElementById('Email').addEventListener('keyup', validateEmail);
-    document.getElementById('password').addEventListener('keyup', validatepassword);
+    document.getElementById('password').addEventListener('keyup', validatePassword);
     document.getElementById('Ville').addEventListener('keyup', validateVille);
-
 
     document.querySelector('form').addEventListener('submit', function (e) {
         let isValid = true;
@@ -17,17 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!validateNumTel()) isValid = false;
         if (!validateEmail()) isValid = false;
         if (!validateVille()) isValid = false;
-        if (!validateMotDePasse()) isValid = false;
+        if (!validatePassword()) isValid = false;
 
         if (!isValid) {
-            e.preventDefault(); // Prevent form submission if validation fails
+            e.preventDefault(); 
             alert("Veuillez corriger les erreurs avant de soumettre le formulaire.");
         }
     });
 });
 
 
-// Validation functions
 function validateNom() {
     const input = document.getElementById('Nom');
     const value = input.value.trim();
@@ -106,13 +104,14 @@ function validateVille() {
     }
 }
 
-function validatepassword() {
+function validatePassword() {
     const input = document.getElementById('password');
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/;
-
-    if (!passwordRegex.test(input.value)) {
+    if (input.value !== "" && !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,}$/.test(input.value)) {
         createMessage(input, "Le mot de passe doit contenir au moins une lettre majuscule, un chiffre et un caractère spécial.", 'error');
         return false;
+    } else if (input.value === "") {
+        createMessage(input, "Laissez vide si vous ne souhaitez pas modifier le mot de passe.", 'info');
+        return true;
     } else {
         createMessage(input, "Mot de passe valide.", 'success');
         return true;
@@ -129,6 +128,6 @@ function createMessage(element, message, type) {
 }
 
 function clearMessages(element) {
-    const messages = element.parentNode.querySelectorAll('.error, .success');
+    const messages = element.parentNode.querySelectorAll('.error, .success', '.info');
     messages.forEach((message) => message.remove());
 }

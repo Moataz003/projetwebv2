@@ -1,102 +1,91 @@
 <?php
-
 include_once 'C:/xampp/htdocs/Motaz/model/User.php';
 include_once 'C:/xampp/htdocs/Motaz/Controller/UtilisateursU.php';
 session_start();
+
+// Redirect already logged-in users
 if (isset($_SESSION["email"])) {
-    if ($_SESSION["role_user"] == "Administrateur")
-        header("location:../back/backUser.php");
-    else if ($_SESSION["role_user"] == "User")
-        header("location:index.php");
+    if ($_SESSION["role_user"] == "Administrateur") {
+        header("Location: ../Back_Office/afficherUtilisateurs.php");
+    } else if ($_SESSION["role_user"] == "User") {
+        header("Location: profil.php");
+    }
+    exit();
 }
+
 $error = "";
-// create Utilisateur
 $Utilisateurs = null;
 
-// create an instance of the controller
+// Create an instance of the controller
 $UtilisateursU = new UtilisateursU();
+
 if (
-    isset($_POST["Nom"]) &&
-    isset($_POST["Prenom"]) &&
-    isset($_POST["Age"]) &&
-    isset($_POST["Ville"]) &&
-    isset($_POST["Num_tel"]) &&
-    isset($_POST["Email"]) &&
-    isset($_POST["Role"]) &&
-    isset($_POST["password"])
+    isset($_POST["Nom"], $_POST["Prenom"], $_POST["Age"], $_POST["Ville"], $_POST["Num_tel"], 
+          $_POST["Email"], $_POST["Role"], $_POST["password"])
 ) {
     if (
-        !empty($_POST['Nom']) &&
-        !empty($_POST["Prenom"]) &&
-        !empty($_POST["Age"]) &&
-        !empty($_POST["Ville"]) &&
-        !empty($_POST["Num_tel"]) &&
-        !empty($_POST["Email"]) &&
-        !empty($_POST["Role"])
+        !empty($_POST['Nom']) && !empty($_POST["Prenom"]) && !empty($_POST["Age"]) && 
+        !empty($_POST["Ville"]) && !empty($_POST["Num_tel"]) && 
+        !empty($_POST["Email"]) && !empty($_POST["Role"]) && !empty($_POST["password"])
     ) {
-
-
-        //upload image
+        // Handle image upload
         $target_dir = "../uploads/";
         $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
         $uploadOk = 1;
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        // Validate image file
         $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
         if ($check !== false) {
-            // echo "File is an image - " . $check["mime"] . ".";
             $uploadOk = 1;
         } else {
-            // echo "File is not an image.";
             $uploadOk = 0;
         }
 
-        // Check if file already exists
         if (file_exists($target_file)) {
-            echo "Sorry, file already exists.";
             $uploadOk = 0;
         }
 
-        // Check file size
         if ($_FILES["fileToUpload"]["size"] > 500000) {
-            echo "Sorry, your file is too large.";
             $uploadOk = 0;
         }
 
-        // Allow certain file formats
-        if (
-            $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-            && $imageFileType != "gif"
-        ) {
-            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+        if (!in_array($imageFileType, ["jpg", "png", "jpeg", "gif"])) {
             $uploadOk = 0;
         }
-        if ($uploadOk == 0) {
-            header('Location:image not uploaded');
+
+        // Proceed if upload is valid
+        if ($uploadOk == 1 && move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+            $Utilisateurs = new Utilisateurs(
+                null,
+                $_POST['Nom'],
+                $_POST['Prenom'],
+                $_POST['Age'],
+                $_POST['Ville'],
+                $_POST['Num_tel'],
+                $_POST['Email'],
+                $_POST['Role'],
+                md5($_POST['password']) // Store hashed password
+            );
+
+            // Set profile picture path
+            $Utilisateurs->setImg($target_file);
+
+            // Add user to the database
+            $UtilisateursU->ajouterUtilisateurs($Utilisateurs);
+
+            // Redirect to login page after successful registration
+            header("location:login.php");
+            exit();
         } else {
-            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-
-                $Utilisateurs = new Utilisateurs(
-                    null,
-                    $_POST['Nom'],
-                    $_POST['Prenom'],
-                    $_POST['Age'],
-                    $_POST['Ville'],
-                    $_POST['Num_tel'],
-                    $_POST['Email'],
-                    $_POST['Role'],
-                    md5($_POST['password'])
-                );
-                $Utilisateurs->setImg($target_file);
-                $UtilisateursU->ajouterUtilisateurs($Utilisateurs);
-                
-            }
+            $error = "Image upload failed.";
         }
     } else {
-        $error = "Missing information";
+        $error = "Missing information.";
     }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -284,6 +273,26 @@ if (
             padding: 1.5rem;
         }
     }
+    .password-input {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 65%;
+    right: 1rem;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #0284c7;
+    font-size: 1.25rem;
+    transition: color 0.3s;
+}
+
+.password-toggle:hover {
+    color: #075985;
+}
+
+    
 </style>
     <meta charset="utf-8">
     <title>Wajahni</title>
@@ -326,7 +335,7 @@ if (
 
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-        <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+        <a href="index.php" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
             <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Wajahni</h2>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -334,7 +343,7 @@ if (
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link">Home</a>
+                <a href="index.php" class="nav-item nav-link">Home</a>
                 <a href="about.html" class="nav-item nav-link">About</a>
                 <a href="courses.html" class="nav-item nav-link ">Courses</a>
                 <div class="nav-item dropdown">
@@ -347,7 +356,7 @@ if (
                 </div>
                 <a href="contact.html" class="nav-item nav-link">Contact</a>
             </div>
-            <a href="index.html" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Login<i class="fa fa-arrow-right ms-3"></i></a>
+            <a href="login.php" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Login<i class="fa fa-arrow-right ms-3"></i></a>
         </div>
     </nav>
     <!-- Navbar End -->
@@ -390,17 +399,26 @@ if (
                 <input class="form-input" type="email" name="Email" id="Email" placeholder="Email">
             </div>
 
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input class="form-input" type="password" name="password" id="password" placeholder="Password">
-            </div>
+            <div class="form-group password-input">
+    <label for="password" class="form-label">Password</label>
+    <input class="form-input" type="password" name="password" id="password" placeholder="Password">
+    <i class="fa fa-eye password-toggle" id="togglePassword"></i>
+</div>
 
             <div class="form-group">
                 <label for="fileToUpload" class="form-label">Profile Picture</label>
                 <input class="form-input" type="file" name="fileToUpload" id="fileToUpload">
             </div>
 
-            <input type="hidden" name="Role" id="" value="User">
+            <div class="form-group">
+    <label for="Role" class="form-label">Role</label>
+    <select class="form-input" name="Role" id="Role">
+        <option value="User">User</option>
+        <option value="Administrateur">Administrator</option>
+        <option value="Formateur">Formateur</option>
+    </select>
+</div>
+
 
             <div>
                 <button type="submit" class="register-btn">Register</button>
@@ -508,6 +526,9 @@ if (
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script src="validation.js"></script>
+    <script src="show.js"></script>
+    
 </body>
+
 
 </html>
