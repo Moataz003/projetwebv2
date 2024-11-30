@@ -75,11 +75,11 @@ if (isset($_POST['submit'])) {
                 <form action="AddCategory.php" method="post">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" placeholder="Enter category name" required>
+                        <input type="text" id="name" name="name" placeholder="Enter category name" >
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <textarea id="description" name="description" rows="5" placeholder="Enter category description" required></textarea>
+                        <textarea id="description" name="description" rows="5" placeholder="Enter category description" ></textarea>
                     </div>
                     <div class="form-group">
                         <button type="submit" name="submit">Add Category</button>
@@ -95,5 +95,6 @@ if (isset($_POST['submit'])) {
         </script>
         <?php unset($_SESSION['message']); ?>
     <?php endif; ?>
+    <script src="/ProjetWeb/VIEW/js/ControleSaisiCreate.js"></script>
 </body>
 </html>

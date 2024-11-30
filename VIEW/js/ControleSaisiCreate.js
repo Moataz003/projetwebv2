@@ -33,12 +33,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // Validate name input
     function validateName() {
         const name = nameInput.value.trim();
+        const namePattern = /^[A-Za-z\s]+$/; // Only allows letters and spaces
+
         if (name === "") {
             displayError(nameInput, "Name is required.");
             return false;
         }
-        if (name.length < 3) {
-            displayError(nameInput, "Name must be at least 3 characters long.");
+        if (name.length > 15) {
+            displayError(nameInput, "Name must not exceed 15 characters.");
+            return false;
+        }
+        if (!namePattern.test(name)) {
+            displayError(nameInput, "Name cannot contain numbers.");
             return false;
         }
         clearError(nameInput);
@@ -48,12 +54,13 @@ document.addEventListener("DOMContentLoaded", function () {
     // Validate description input
     function validateDescription() {
         const description = descriptionInput.value.trim();
+
         if (description === "") {
             displayError(descriptionInput, "Description is required.");
             return false;
         }
-        if (description.length < 10) {
-            displayError(descriptionInput, "Description must be at least 10 characters long.");
+        if (description.length > 30) {
+            displayError(descriptionInput, "Description must not exceed 30 characters.");
             return false;
         }
         clearError(descriptionInput);

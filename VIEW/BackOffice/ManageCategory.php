@@ -2,6 +2,13 @@
 session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
+// Number of records per page
+$limit = 6;
+
+// Get the current page from URL, default to 1 if not set
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
 // Handle category deletion
 if (isset($_POST['delete'])) {
     $categoryId = $_POST['category_id'];
@@ -26,11 +33,25 @@ if (isset($_POST['delete'])) {
     exit;
 }
 
-// Fetch categories from the database
+// Fetch the total number of categories
 try {
     $db = config::getConnexion();
-    $sql = "SELECT CategoryID, Name, Description FROM category";
+    $sql = "SELECT COUNT(*) FROM category";
     $query = $db->prepare($sql);
+    $query->execute();
+    $totalCategories = $query->fetchColumn();
+} catch (Exception $e) {
+    $_SESSION['message'] = 'Error fetching categories: ' . $e->getMessage();
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// Fetch categories for the current page
+try {
+    $sql = "SELECT CategoryID, Name, Description FROM category LIMIT :limit OFFSET :offset";
+    $query = $db->prepare($sql);
+    $query->bindParam(':limit', $limit, PDO::PARAM_INT);
+    $query->bindParam(':offset', $offset, PDO::PARAM_INT);
     $query->execute();
     $categories = $query->fetchAll();
 } catch (Exception $e) {
@@ -38,6 +59,9 @@ try {
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
 }
+
+// Calculate the total number of pages
+$totalPages = ceil($totalCategories / $limit);
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +69,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories</title>
+    <title>Manage Categories</title>
     <link rel="stylesheet" href="./css/CategoryManagement.css">
 </head>
 <body>
@@ -70,43 +94,48 @@ try {
             <!-- Category Table -->
             <div class="form-container">
                 <h2>Categories</h2>
-                <form action = "AddCategory.php" >
-                <button  type="submit" class="delete-button">Add</button>
+                <form action="AddCategory.php">
+                    <button type="submit" class="delete-button">Add Category</button>
                 </form>
                 <table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Category ID</th> <!-- New Column for CategoryID -->
-      <th style="text-align: center; padding-left: 80px; ">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($categories as $category): ?>
-      <tr>
-        <td><?= htmlspecialchars($category['Name']) ?></td>
-        <td><?= htmlspecialchars($category['Description']) ?></td>
-        <td><?= htmlspecialchars($category['CategoryID']) ?></td> <!-- Displaying CategoryID -->
-        <td style="text-align: right;">
-          <!-- Delete Button -->
-          <form action="" method="post" style="display: inline-block;">
-            <input type="hidden" name="category_id" value="<?= $category['CategoryID'] ?>">
-            <button type="submit" class="delete-button" name="delete">Delete</button>
-          </form>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Category ID</th>
+                            <th style="text-align: center; padding-left: 80px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($categories as $category): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($category['Name']) ?></td>
+                            <td><?= htmlspecialchars($category['Description']) ?></td>
+                            <td><?= htmlspecialchars($category['CategoryID']) ?></td>
+                            <td style="text-align: right;">
+                                <!-- Delete Button -->
+                                <form action="" method="post" style="display: inline-block;">
+                                    <input type="hidden" name="category_id" value="<?= $category['CategoryID'] ?>">
+                                    <button type="submit" class="delete-button" name="delete">Delete</button>
+                                </form>
 
-          <!-- Edit Button -->
-          <form action="EditCategory.php" method="get" style="display: inline-block;">
-            <input type="hidden" name="category_id" value="<?= $category['CategoryID'] ?>">
-            <button type="submit" class="edit-button">Edit</button>
-          </form>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
+                                <!-- Edit Button -->
+                                <form action="EditCategory.php" method="get" style="display: inline-block;">
+                                    <input type="hidden" name="category_id" value="<?= $category['CategoryID'] ?>">
+                                    <button type="submit" class="edit-button">Edit</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
 
-
+                <!-- Pagination -->
+                <div class="pagination">
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <a href="?page=<?php echo $i; ?>" class="page-link"><?php echo $i; ?></a>
+                    <?php endfor; ?>
+                </div>
             </div>
         </main>
     </div>
