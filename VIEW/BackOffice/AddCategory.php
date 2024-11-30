@@ -37,7 +37,7 @@ if (isset($_POST['submit'])) {
     }
 
     // Redirect to DeleteCategory.php after adding the category
-    header("Location: DeleteCategory.php");
+    header("Location: ManageCategory.php");
     exit;
 }
 ?>

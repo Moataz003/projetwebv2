@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) {
     }
 
     // After the category is updated, redirect to DeleteCategory.php
-    header("Location: DeleteCategory.php");
+    header("Location: ManageCategory.php");
     exit;
 }
 
@@ -54,12 +54,12 @@ if (isset($_GET['category_id'])) {
         $category = $query->fetch();
     } catch (Exception $e) {
         $_SESSION['message'] = 'Error fetching category: ' . $e->getMessage();
-        header("Location: DeleteCategory.php"); // Redirect to DeleteCategory.php if an error occurs
+        header("Location: ManageCategory.php"); // Redirect to DeleteCategory.php if an error occurs
         exit;
     }
 } else {
     $_SESSION['message'] = 'Category ID is required to edit.';
-    header("Location: DeleteCategory.php"); // Redirect to DeleteCategory.php if no category ID is provided
+    header("Location: ManageCategory.php"); // Redirect to DeleteCategory.php if no category ID is provided
     exit;
 }
 ?>
