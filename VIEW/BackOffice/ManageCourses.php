@@ -2,17 +2,23 @@
 session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
-// Fetch courses from the database
+// Fetch courses and their categories from the database
 try {
     $db = config::getConnexion();
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  // Enable error reporting
-    $sql = "SELECT * FROM course";  // Fetch all courses
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Enable error reporting
+
+    // Join the course and category tables to get category name
+    $sql = "SELECT course.id_form, course.nom_form, course.description, course.price, category.name AS category_name 
+            FROM course 
+            LEFT JOIN category ON course.category_id = category.CategoryID"; // Join condition
+
     $query = $db->prepare($sql);
     $query->execute();
-    $courses = $query->fetchAll();
+    $courses = $query->fetchAll(PDO::FETCH_ASSOC);
 } catch (Exception $e) {
     $_SESSION['message'] = 'Error fetching courses: ' . $e->getMessage();
 }
+
 
 // Handle course deletion
 if (isset($_GET['id'])) {
@@ -51,7 +57,7 @@ if (isset($_GET['id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Courses</title>
-    <link rel="stylesheet" href="./css/StylesEditCourses.css">
+    <link rel="stylesheet" href="./css/CoursesManagement.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -86,40 +92,42 @@ if (isset($_GET['id'])) {
                             <th>Course Name</th>
                             <th>Description</th>
                             <th>Price</th>
-                            <th>Category ID</th>
+                            <th>Category</th>
                             <th style="text-align: center; padding-left: 80px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($courses)): ?>
-                            <?php foreach ($courses as $course): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($course['id_form']) ?></td>
-                                    <td><?= htmlspecialchars($course['nom_form']) ?></td>
-                                    <td><?= htmlspecialchars($course['description']) ?></td>
-                                    <td><?= htmlspecialchars($course['price']) ?></td>
-                                    <td><?= htmlspecialchars($course['category_id']) ?></td>
-                                    <td style="text-align: right;">
-                                        <!-- Delete Button -->
-                                        <form action="" method="get" style="display: inline-block;">
-                                            <input type="hidden" name="id" value="<?= $course['id_form'] ?>">
-                                            <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this course?');">Delete</button>
-                                        </form>
+    <?php if (!empty($courses)): ?>
+        <?php foreach ($courses as $course): ?>
+            <tr>
+                <td><?= htmlspecialchars($course['id_form']) ?></td>
+                <td><?= htmlspecialchars($course['nom_form']) ?></td>
+                <td><?= htmlspecialchars($course['description']) ?></td>
+                <td><?= htmlspecialchars($course['price']) ?></td>
+                <!-- Display the category name instead of category_id -->
+                <td><?= htmlspecialchars($course['category_name'] ?? 'No Category') ?></td>
+                <td style="text-align: right;">
+                    <!-- Delete Button -->
+                    <form action="" method="get" style="display: inline-block;">
+                        <input type="hidden" name="id" value="<?= $course['id_form'] ?>">
+                        <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this course?');">Delete</button>
+                    </form>
 
-                                        <!-- Edit Button -->
-                                        <form action="EditCourse.php" method="get" style="display: inline-block;">
-                                            <input type="hidden" name="id" value="<?= $course['id_form'] ?>">
-                                            <button type="submit" class="edit-button">Edit</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="6">No courses found.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
+                    <!-- Edit Button -->
+                    <form action="EditCourses.php" method="get" style="display: inline-block;">
+                        <input type="hidden" name="id" value="<?= $course['id_form'] ?>">
+                        <button type="submit" class="edit-button">Edit</button>
+                    </form>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <tr>
+            <td colspan="6">No courses found.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+
                 </table>
 
                 <!-- Pagination -->
