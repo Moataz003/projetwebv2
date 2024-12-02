@@ -84,7 +84,7 @@ try {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Courses</title>
-  <link rel="stylesheet" href="./css/StylesAddCategory.css">
+  <link rel="stylesheet" href="./css/COURSES.css">
 </head>
 <body>
   <div class="dashboard-container">

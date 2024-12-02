@@ -61,7 +61,7 @@ if (isset($_GET['course_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Management</title>
-    <link rel="stylesheet" href="./css/StylesEditCourses.css">
+    <link rel="stylesheet" href="./css/StylesManageCourses.css">
 </head>
 <body>
 
