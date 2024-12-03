@@ -2,10 +2,37 @@
 session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
+// Path to the folder where thumbnails will be saved
+$thumbnailDir = 'C:/xampp/htdocs/ProjetWeb/VIEW/CategoriesThumbnail/';
+
 // Check if form is submitted (Add category)
 if (isset($_POST['submit'])) {
     $name = htmlspecialchars($_POST['name']);
     $description = htmlspecialchars($_POST['description']);
+    $thumbnailPath = null;
+
+    // Handle file upload
+    if (!empty($_FILES['thumbnail']['name'])) {
+        $fileName = basename($_FILES['thumbnail']['name']);
+        $targetFile = $thumbnailDir . $fileName;
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+
+        // Validate the uploaded file
+        if (in_array($fileType, $allowedTypes)) {
+            if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile)) {
+                $thumbnailPath = 'VIEW/CategoriesThumbnail/' . $fileName;
+            } else {
+                $_SESSION['message'] = 'Error uploading thumbnail.';
+                header("Location: AddCategory.php");
+                exit;
+            }
+        } else {
+            $_SESSION['message'] = 'Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.';
+            header("Location: AddCategory.php");
+            exit;
+        }
+    }
 
     if (!empty($name) && !empty($description)) {
         try {
@@ -21,11 +48,12 @@ if (isset($_POST['submit'])) {
                 $_SESSION['message'] = 'Error: A category with this name already exists.';
             } else {
                 // Insert the new category into the database
-                $sql = "INSERT INTO category (Name, Description) VALUES (:name, :description)";
+                $sql = "INSERT INTO category (Name, Description, Thumbnail) VALUES (:name, :description, :thumbnail)";
                 $query = $db->prepare($sql);
                 $query->execute([
                     ':name' => $name,
                     ':description' => $description,
+                    ':thumbnail' => $thumbnailPath
                 ]);
                 $_SESSION['message'] = 'Category added successfully.';
             }
@@ -36,7 +64,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['message'] = 'Please fill in all fields.';
     }
 
-    // Redirect to DeleteCategory.php after adding the category
+    // Redirect to ManageCategory.php after adding the category
     header("Location: ManageCategory.php");
     exit;
 }
@@ -72,14 +100,18 @@ if (isset($_POST['submit'])) {
             <div class="form-container">
                 <h2>Add Category</h2>
                 <!-- Form submits to the same page to process the request -->
-                <form action="AddCategory.php" method="post">
+                <form action="AddCategory.php" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type="text" id="name" name="name" placeholder="Enter category name" >
+                        <input type="text" id="name" name="name" placeholder="Enter category name">
                     </div>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <textarea id="description" name="description" rows="5" placeholder="Enter category description" ></textarea>
+                        <textarea id="description" name="description" rows="5" placeholder="Enter category description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="thumbnail">Thumbnail:</label>
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*">
                     </div>
                     <div class="form-group">
                         <button type="submit" name="submit">Add Category</button>
