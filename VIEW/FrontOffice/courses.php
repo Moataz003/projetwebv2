@@ -28,6 +28,7 @@ try {
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -129,33 +130,31 @@ try {
         </div>
         <div class="row g-3">
             <?php foreach ($categories as $category): ?>
-                <div class="col-lg-7 col-md-6">
-                    <div class="row g-3">
-                        <!-- Loop through courses to display those belonging to the current category -->
-                        <?php
-                        $categoryCourses = array_filter($courses, function($course) use ($category) {
-                            return $course['CategoryID'] == $category['CategoryID'];
-                        });
-                        ?>
-                        
-                        <?php foreach ($categoryCourses as $course): ?>
-                            <div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
-                                <a class="position-relative d-block overflow-hidden" href="">
-                                    <img class="img-fluid" src="<?php echo htmlspecialchars($course['thumbnail_path']); ?>" alt="<?= $category['name'] ?>">
-                                    <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                        <h5 class="m-0"><?= $category['name'] ?></h5>
-                                        <small class="text-primary"><?= count($categoryCourses) ?> Courses</small>
-                                    </div>
-                                </a>
+                <div class="col-lg-4 col-md-6">
+                    <div class="wow zoomIn" data-wow-delay="0.1s">
+                        <a class="position-relative d-block overflow-hidden" href="#">
+                            <img class="img-fluid" src="<?php echo htmlspecialchars($category['thumbnail']); ?>" alt="<?= htmlspecialchars($category['name']); ?>">
+                            <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+                                <h5 class="m-0"><?= htmlspecialchars($category['name']); ?></h5>
+                                <small class="text-primary">
+                                    <!-- Count the number of courses in this category -->
+                                    <?php 
+                                        $categoryCourses = array_filter($courses, function($course) use ($category) {
+                                            return $course['CategoryID'] == $category['CategoryID'];
+                                        });
+                                        echo count($categoryCourses);
+                                    ?> Courses
+                                </small>
                             </div>
-                        <?php endforeach; ?>
+                        </a>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     </div>
 </div>
-<!-- Categories end -->
+<!-- Categories End -->
+
 
 
     <!-- Courses Start -->

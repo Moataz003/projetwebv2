@@ -21,7 +21,8 @@ if (isset($_POST['submit'])) {
         // Validate the uploaded file
         if (in_array($fileType, $allowedTypes)) {
             if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile)) {
-                $thumbnailPath = 'VIEW/CategoriesThumbnail/' . $fileName;
+                // Save the relative path to the thumbnail, similar to PHP 2 approach
+                $thumbnailPath = str_replace("C:/xampp/htdocs/", "/", $targetFile); 
             } else {
                 $_SESSION['message'] = 'Error uploading thumbnail.';
                 header("Location: AddCategory.php");
@@ -69,6 +70,7 @@ if (isset($_POST['submit'])) {
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

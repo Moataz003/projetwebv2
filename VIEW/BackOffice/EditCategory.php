@@ -3,7 +3,7 @@ session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
 // Path to the folder where images will be saved
-$thumbnailDir = 'C:/xampp/htdocs/ProjetWeb/VIEW/CategoriesThumbnail/';
+$thumbnailDir = '/projetweb/VIEW/CategoriesThumbnail/'; // Updated path
 
 // Check if the form is submitted to update the category
 if (isset($_POST['submit'])) {
@@ -15,14 +15,14 @@ if (isset($_POST['submit'])) {
     // Handle file upload
     if (!empty($_FILES['thumbnail']['name'])) {
         $fileName = basename($_FILES['thumbnail']['name']);
-        $targetFile = $thumbnailDir . $fileName;
+        $targetFile = $_SERVER['DOCUMENT_ROOT'] . $thumbnailDir . $fileName; // Full file path
         $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
         // Validate the uploaded file
         if (in_array($fileType, $allowedTypes)) {
             if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile)) {
-                $thumbnailPath = 'VIEW/CategoriesThumbnail/' . $fileName;
+                $thumbnailPath = $thumbnailDir . $fileName; // Save relative path
             } else {
                 $_SESSION['message'] = 'Error uploading thumbnail.';
                 header("Location: EditCategory.php?category_id=" . $categoryId);
