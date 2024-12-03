@@ -2,7 +2,6 @@
 session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
-// Handle form submission (Add Course)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     // Sanitize and validate inputs
     $courseName = htmlspecialchars($_POST['courseName']);
@@ -10,25 +9,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $price = $_POST['price'];
     $categoryID = $_POST['category']; // Selected category ID
 
-    // Check if inputs are not empty
     if (!empty($courseName) && !empty($description) && !empty($price) && !empty($categoryID)) {
         try {
-            $db = config::getConnexion();
+            // Handle thumbnail upload
+            if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == 0) {
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                $thumbnail = $_FILES['thumbnail'];
+                $thumbnailType = mime_content_type($thumbnail['tmp_name']);
 
-            // Insert new course into the database
-            $sql = "INSERT INTO course (nom_form, description, price, category_id) VALUES (:courseName, :description, :price, :categoryID)";
-            $query = $db->prepare($sql);
-            $query->execute([
-                ':courseName' => $courseName,
-                ':description' => $description,
-                ':price' => $price,
-                ':categoryID' => $categoryID
-            ]);
+                // Validate file type
+                if (!in_array($thumbnailType, $allowedTypes)) {
+                    throw new Exception("Invalid file type. Only JPG and PNG are allowed.");
+                }
 
-            // Set success message and redirect to ManageCourses.php
-            $_SESSION['message'] = 'Course added successfully.';
-            header("Location: ManageCourses.php");
-            exit;
+                // Validate resolution
+                list($width, $height) = getimagesize($thumbnail['tmp_name']);
+                if ($width != 1920 || $height != 1080) {
+                    throw new Exception("Image resolution must be exactly 1920x1080.");
+                }
+
+                // Generate unique file name and move the file
+                $targetDir = "C:/xampp/htdocs/ProjetWeb/VIEW/CoursesThumbnail/";
+                $fileName = uniqid() . "_" . basename($thumbnail['name']);
+                $targetFilePath = $targetDir . $fileName;
+
+                if (!move_uploaded_file($thumbnail['tmp_name'], $targetFilePath)) {
+                    throw new Exception("Failed to upload the thumbnail.");
+                }
+
+                // Insert course details into the database
+                $db = config::getConnexion();
+                $sql = "INSERT INTO course (nom_form, description, price, category_id, thumbnail_path)
+                        VALUES (:courseName, :description, :price, :categoryID, :thumbnailPath)";
+                $query = $db->prepare($sql);
+                $query->execute([
+                    ':courseName' => $courseName,
+                    ':description' => $description,
+                    ':price' => $price,
+                    ':categoryID' => $categoryID,
+                    ':thumbnailPath' => str_replace("C:/xampp/htdocs/", "/", $targetFilePath) // Save relative path
+                ]);
+
+                $_SESSION['message'] = 'Course added successfully.';
+                header("Location: ManageCourses.php");
+                exit;
+            } else {
+                throw new Exception("Please upload a thumbnail.");
+            }
         } catch (Exception $e) {
             $_SESSION['message'] = 'Error adding course: ' . $e->getMessage();
         }
@@ -40,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 // Fetch categories for the dropdown menu
 try {
     $db = config::getConnexion();
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Enable error reporting
-    $sql = "SELECT CategoryID, name FROM category"; // Fetch categories
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql = "SELECT CategoryID, name FROM category";
     $query = $db->prepare($sql);
     $query->execute();
     $categories = $query->fetchAll();
@@ -49,6 +76,8 @@ try {
     $_SESSION['message'] = 'Error fetching categories: ' . $e->getMessage();
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,7 +109,7 @@ try {
             <!-- Add Course Form -->
             <div class="form-container">
                 <h2>Add Course</h2>
-                <form action="" method="POST">
+                <form action="" method="POST" enctype="multipart/form-data">
                     <!-- Category -->
                     <div class="form-group">
                         <label for="category">Category:</label>
@@ -108,6 +137,12 @@ try {
                     <div class="form-group">
                         <label for="price">Price ($):</label>
                         <input type="number" id="price" name="price" placeholder="Enter course price" min="0" step="0.01" required>
+                    </div>
+
+                    <!-- Thumbnail Upload -->
+                    <div class="form-group">
+                        <label for="thumbnail">Thumbnail (1920x1080):</label>
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" required>
                     </div>
 
                     <!-- Submit Button -->
