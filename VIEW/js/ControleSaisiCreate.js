@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             displayError(nameInput, "Name is required.");
             return false;
         }
-        if (name.length > 15) {
+        if (name.length > 20) {
             displayError(nameInput, "Name must not exceed 15 characters.");
             return false;
         }
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             displayError(descriptionInput, "Description is required.");
             return false;
         }
-        if (description.length > 30) {
+        if (description.length > 40) {
             displayError(descriptionInput, "Description must not exceed 30 characters.");
             return false;
         }

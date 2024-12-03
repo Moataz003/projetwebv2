@@ -22,11 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
                     throw new Exception("Invalid file type. Only JPG and PNG are allowed.");
                 }
 
-                // Validate resolution
-                list($width, $height) = getimagesize($thumbnail['tmp_name']);
-                if ($width != 1920 || $height != 1080) {
-                    throw new Exception("Image resolution must be exactly 1920x1080.");
-                }
+                
 
                 // Generate unique file name and move the file
                 $targetDir = "C:/xampp/htdocs/ProjetWeb/VIEW/CoursesThumbnail/";
@@ -141,7 +137,7 @@ try {
 
                     <!-- Thumbnail Upload -->
                     <div class="form-group">
-                        <label for="thumbnail">Thumbnail (1920x1080):</label>
+                        <label for="thumbnail">Thumbnail</label>
                         <input type="file" id="thumbnail" name="thumbnail" accept="image/*" required>
                     </div>
 
