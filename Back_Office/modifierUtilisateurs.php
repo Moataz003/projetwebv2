@@ -17,7 +17,7 @@ $error = "";
 // create Utilisateurs
 $Utilisateurs = null;
 
-// create an instance of the controller
+// create an instance of the coantroller
 $UtilisateursU = new UtilisateursU();
 if (
   isset($_POST["Nom"]) &&
@@ -99,7 +99,7 @@ if (
           </a>
         </li>
         <li class="menu-item has-submenu">
-          <a class="menu-link" href=""> <i class="icon material-icons md-shopping_bag"></i>
+          <a class="menu-link" href=""> <i class="icon material-icons md-person"></i>
             <span class="text">Utilisateurs</span>
           </a>
           <div class="submenu">
@@ -158,8 +158,8 @@ if (
           <li class="dropdown nav-item">
             <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"> <img class="img-xs rounded-circle" src="<?php echo $_SESSION['img'] ?>" alt="User"></a>
             <div class="dropdown-menu dropdown-menu-end">
-              <a class="dropdown-item" href="#">My profile</a>
-              <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="..\frontoffice\profil.php">Profil</a>
+              
               <a class="dropdown-item text-danger" href="logout.php">Exit</a>
             </div>
           </li>
@@ -212,30 +212,30 @@ if (
 
           <div class="mb-4">
             <label for="Age">Age: </label>
-            <input type="text" name="Age" value="<?php echo $Utilisateurs['Age']; ?>" id="Age" class="form-control">
+            <input type="text" name="Age" value="<?php echo $Utilisateurs['Age']; ?>" id="Age" class="form-control" disabled>
           </div>
 
 
           <div class="mb-4">
             <label for="Ville">Ville: </label>
-            <input type="text" name="Ville" value="<?php echo $Utilisateurs['Ville']; ?>" id="Ville" class="form-control">
+            <input type="text" name="Ville" value="<?php echo $Utilisateurs['Ville']; ?>" id="Ville" class="form-control" disabled>
           </div>
 
 
           <div class="mb-4">
             <label for="Num_tel">Num_tel:</label>
-            <input type="text" name="Num_tel" id="Num_tel" value="<?php echo $Utilisateurs['Num_tel']; ?>" id="Num_tel" class="form-control">
+            <input type="text" name="Num_tel" id="Num_tel" value="<?php echo $Utilisateurs['Num_tel']; ?>" id="Num_tel" class="form-control" disabled>
           </div>
 
           <div class="mb-4">
-            <label for="Email">Email:</label>
-            <input type="Email" name="Email" id="Email" value="<?php echo $Utilisateurs['Email']; ?>" class="form-control">
-          </div>
+    <label for="Email">Email:</label>
+    <input type="email" name="Email" id="Email" value="<?php echo $Utilisateurs['Email']; ?>" class="form-control" disabled>
+</div>
 
-          <div class="mb-4">
-            <label for="password">password:</label>
-            <input type="password" name="password" id="password" value="<?php echo $Utilisateurs['password']; ?>" class="form-control">
-          </div>
+<div class="mb-4">
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" value="<?php echo $Utilisateurs['password']; ?>" class="form-control" disabled>
+</div>
 
           <div class="mb-4">
             <label for="Role">Role: </label>

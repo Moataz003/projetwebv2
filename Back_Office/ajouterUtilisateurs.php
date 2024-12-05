@@ -152,11 +152,7 @@ if (
             <a href="modifierUtilisateurs.php">Modifier Utilisateurs</a>
             <a href="supprimerUtilisateurs.php">Supprimer Utilisateurs</a>
             <a href="afficherUtilisateurs.php">Afficher Utilisateurs</a>
-            <a href="rechercher_tri_utilisateurs.php">Recherche & Tri</a>
-            <a href="classification_utilisateurs.php">Classification Utilisateurs</a>
-            <a href="calcul_nombre_utilisateurs.php">Calcul Nombre Utilisateurs</a>
-            <a href="mailing_utilisateurs.php">Mailing</a>
-            <a href="pdf_utilisateurs.php">PDF</a>
+            
           </div>
         </li>
       </ul>
@@ -192,8 +188,8 @@ if (
           <li class="dropdown nav-item">
             <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"> <img class="img-xs rounded-circle" src="<?php echo $_SESSION['img'] ?>" alt="User"></a>
             <div class="dropdown-menu dropdown-menu-end">
-              <a class="dropdown-item" href="#">My profile</a>
-              <a class="dropdown-item" href="#">Settings</a>
+            <a class="dropdown-item" href="..\frontoffice\profil.php">Profil</a>
+              
               <a class="dropdown-item text-danger" href="logout.php">Exit</a>
             </div>
           </li>

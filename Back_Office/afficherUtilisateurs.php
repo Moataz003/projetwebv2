@@ -73,7 +73,7 @@ session_start();
 	  <div class="submenu">
         <a href="ajouterUtilisateurs.php">Ajouter Utilisateurs</a>
         <a href="modifierUtilisateurs.php">Modifier Utilisateurs</a>
-        <a href="afficherUtilisateurs.php">Afficher Utilisateurs</a>
+        <a href="supprimerUtilisateurs.php">Supprimer Utilisateurs</a>
        
 		</div>
 		</li>
@@ -114,8 +114,8 @@ session_start();
       <li class="dropdown nav-item">
         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"> <img class="img-xs rounded-circle" src="<?php echo $_SESSION['img'] ?>" alt="User"></a>
         <div class="dropdown-menu dropdown-menu-end">
-          <a class="dropdown-item" href="#">Mon profile</a>
-          <a class="dropdown-item" href="#">Paramètres</a>
+          <a class="dropdown-item" href="..\frontoffice\profil.php">Profil</a>
+          
           <a class="dropdown-item text-danger" href="logout.php">Sortie</a>
         </div>
       </li>
@@ -126,9 +126,7 @@ session_start();
 <section class="content-main">
 	<div class="content-header">
 		<h2 class="content-title"> Dashboard </h2>
-		<div>
-			<a href="#" class="btn btn-primary">Creer raport</a>
-		</div>
+		
 	</div>
 	<div class="row" style="justify-content: center;">
                     <div class="col-lg-12" >
@@ -146,52 +144,49 @@ session_start();
 		<br>
 		<br>
 		<table class="table align-items-center table-flush">
-			<tr>
-				<th>Nom</th>
-				<th>Prenom</th>
-				<th>Age</th>
-                <th>Ville</th>
-                <th>Num_tel</th>
-				<th>Email</th>
-				<th>Role</th>
-				<th>Password</th>
-				<th>photo de profil</th>
-				<th>Modifier</th>
-				<th>Supprimer</th> 
-			</tr>
-			<?php
-				foreach($listeUtilisateurs as $Utilisateurs){
-			?>
-			<tr>
-				<td><?php echo $Utilisateurs['Nom']; ?></td>
-				<td><?php echo $Utilisateurs['Prenom']; ?></td>
-				<td><?php echo $Utilisateurs['Age']; ?></td>
-				<td><?php echo $Utilisateurs['Ville']; ?></td>
-                <td><?php echo $Utilisateurs['Num_tel']; ?></td>
-				<td><?php echo $Utilisateurs['Email']; ?></td>
-				<td><?php echo $Utilisateurs['Role']; ?></td>
-				<td><?php echo md5($Utilisateurs['password']); ?></td>
-				<td><img class="img-xs rounded-circle" src="<?php echo $Utilisateurs['img']; ?>" alt="User"></td>
-				<td>
-					<form method="POST" action="modifierUtilisateurs.php">
-						<input type="submit"  name="Modifier"  class="btn btn-primary btn-sm"  style="margin-top:3%;margin-left:5%;border-radius: 10%;" value="Modifier">
-						<input type="hidden"   class="btn btn-primary btn-sm"  style="margin-top:3%;margin-left:5%;border-radius: 10%;" value=<?PHP echo $Utilisateurs['Id_user']; ?> name="Id_user">
-						<input type="hidden" value="<?php echo $pro['Id_user'] ?>" name="id">
-					</form>
-				</td>
-				<td>
-				<a href="supprimerUtilisateurs.php?Id_user=<?php echo $Utilisateurs['Id_user']; ?>"> <button type="button" class="btn btn-primary"  style="margin-top:3%;margin-left:5%;border-radius: 10%;">Supprimer</button></a>
-				</td>
-			</tr>
-			<?php
-				}
-			?>
+    <tr>
+        <th>Photo de Profil</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+        <th>Modifier</th>
+        <th>Supprimer</th>
+    </tr>
+    <?php
+    foreach ($listeUtilisateurs as $Utilisateurs) {
+    ?>
+    <tr>
+        <!-- Profile Picture -->
+        <td><img class="img-xs rounded-circle" src="<?php echo $Utilisateurs['img']; ?>" alt="User"></td>
 
+        <!-- Name -->
+        <td><?php echo $Utilisateurs['Nom']; ?></td>
 
+        <!-- Surname -->
+        <td><?php echo $Utilisateurs['Prenom']; ?></td>
 
+        <!-- Email -->
+        <td><?php echo $Utilisateurs['Email']; ?></td>
 
+        <!-- Edit Button -->
+        <td>
+            <form method="POST" action="modifierUtilisateurs.php">
+                <input type="submit" name="Modifier" class="btn btn-primary" value="Modifier">
+                <input type="hidden" value="<?php echo $Utilisateurs['Id_user']; ?>" name="Id_user">
+            </form>
+        </td>
 
-		</table>
+        <!-- Delete Button -->
+        <td>
+            <a href="supprimerUtilisateurs.php?Id_user=<?php echo $Utilisateurs['Id_user']; ?>">
+                <button type="button" class="btn btn-primary">Supprimer</button>
+            </a>
+        </td>
+    </tr>
+    <?php
+    }
+    ?>
+</table>
 	
 
 		</div> <!-- table-responsive end// -->
