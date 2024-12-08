@@ -51,10 +51,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
 
         
-        $mail->setFrom('brahmi.motaz@gmail.com', 'University Project');
+        $mail->setFrom('brahmi.motaz@gmail.com', 'Password reset');
         $mail->addAddress($email); // Recipient's email
         $mail->Subject = 'Password Reset Request';
-        $mail->Body = "Click on this link to reset your password: $reset_link";
+        $mail->Body = "OOPS! it seemes like you forgot you password , here is the link to reset it: $reset_link";
 
         
         if ($mail->send()) {
@@ -377,17 +377,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto p-4 p-lg-0">
             <a href="index.php" class="nav-item nav-link">Home</a>
-            <a href="about.html" class="nav-item nav-link">About</a>
-            <a href="courses.html" class="nav-item nav-link">Courses</a>
+            <a href="about.php" class="nav-item nav-link">About</a>
+            <a href="courses.php" class="nav-item nav-link">Courses</a>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                 <div class="dropdown-menu fade-down m-0">
-                    <a href="team.html" class="dropdown-item">Our Team</a>
-                    <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                    <a href="404.html" class="dropdown-item">404 Page</a>
+                    <a href="team.php" class="dropdown-item">Our Team</a>
+                    <a href="testimonial.php" class="dropdown-item">Testimonial</a>
+                    <a href="404.php" class="dropdown-item">404 Page</a>
                 </div>
             </div>
-            <a href="contact.html" class="nav-item nav-link">Contact</a>
+            <a href="contact.php" class="nav-item nav-link">Contact</a>
         </div>
 
         <?php if (isset($_SESSION['email'])): ?>
@@ -532,7 +532,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script src="validation.js"></script>
+    
 </body>
 
 </html>

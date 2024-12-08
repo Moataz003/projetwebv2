@@ -30,7 +30,7 @@ if (isset($_GET['token'])) {
                 $stmt->execute([$hashed_password, $token]);
 
                 $success = "Password has been reset successfully. Redirecting to login...";
-                header("refresh:3;url=login.php"); // Redirect to login.php after 3 seconds
+                header("refresh:3;url=login.php"); 
                 exit;
             } else {
                 $error = "Passwords do not match. Please try again.";
@@ -52,6 +52,7 @@ if (isset($_GET['token'])) {
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Reset Password</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    
 
 
     
@@ -120,6 +121,11 @@ if (isset($_GET['token'])) {
             </form>
         <?php endif; ?>
     </div>
+
+    <script src="reset.js"></script>
+
+
+
 </body>
 </html>
 

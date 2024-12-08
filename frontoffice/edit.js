@@ -29,9 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function validateNom() {
     const input = document.getElementById('Nom');
     const value = input.value.trim();
-
+    const regex = /^[A-Za-z]+$/;
     if (value.length < 3 || value.length > 15) {
         createMessage(input, "Le nom doit contenir entre 3 et 15 caractères.", 'error');
+        return false;
+    } else if (!regex.test(value)) {
+        createMessage(input, "Le nom ne doit contenir que des lettres.", 'error');
         return false;
     } else {
         createMessage(input, "Nom valide.", 'success');
@@ -43,14 +46,21 @@ function validatePrenom() {
     const input = document.getElementById('Prenom');
     const value = input.value.trim();
 
+    
+    const regex = /^[A-Za-z]+$/;
+
     if (value.length < 3 || value.length > 15) {
         createMessage(input, "Le prénom doit contenir entre 3 et 15 caractères.", 'error');
+        return false;
+    } else if (!regex.test(value)) {
+        createMessage(input, "Le prénom ne doit contenir que des lettres.", 'error');
         return false;
     } else {
         createMessage(input, "Prénom valide.", 'success');
         return true;
     }
 }
+
 
 function validateAge() {
     const input = document.getElementById('Age');

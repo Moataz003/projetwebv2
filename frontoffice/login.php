@@ -1,6 +1,81 @@
 <?php 
 session_start();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password_user'];
+
+    // hCaptcha verification
+    $hCaptchaResponse = $_POST['h-captcha-response'] ?? null; // Ensure it exists
+    $secretKey = 'ES_01e388f7647249cd9e7270b26edcd7d5'; // Replace with your actual hCaptcha secret key
+
+    if ($hCaptchaResponse) {
+        // Send verification request to hCaptcha
+        $url = "https://hcaptcha.com/siteverify";
+        $data = [
+            'secret' => $secretKey,
+            'response' => $hCaptchaResponse,
+        ];
+
+        // Use cURL for the POST request
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $responseData = json_decode($response, true);
+
+        if ($responseData && isset($responseData['success']) && $responseData['success'] === true) {
+            // hCaptcha verified successfully
+            echo "hCaptcha verification passed!";
+
+            // Proceed with login logic
+            $con = mysqli_connect('localhost', 'root', '', 'motaz');
+            if (!$con) {
+                die("Connection failed: " . mysqli_connect_error());
+            }
+
+            // Sanitize email
+            $email = mysqli_real_escape_string($con, $email);
+            $passwordHash = md5($password); // Use stronger hashing like bcrypt in production
+
+            // Verify credentials
+            $stmt = $con->prepare("SELECT * FROM users WHERE Email = ? AND password = ?");
+            $stmt->bind_param("ss", $email, $passwordHash);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $_SESSION['email'] = $email;
+                while ($row = $result->fetch_assoc()) {
+                    $_SESSION['nom_prenom_user'] = $row['Nom'] . " " . $row['Prenom'];
+                    $_SESSION['email'] = $row['Email'];
+                    $_SESSION['tel_user'] = $row['Num_tel'];
+                    $_SESSION['id_user'] = $row['Id_user'];
+                    $_SESSION['role_user'] = $row['Role'];
+                    $_SESSION['img'] = $row['img'];
+                }
+
+                if ($_SESSION["role_user"] == "Administrateur") {
+                    header("Location: ../Back_Office/afficherUtilisateurs.php");
+                } else if ($_SESSION["role_user"] == "User") {
+                    header("Location: index.php");
+                }
+                exit();
+            } else {
+                echo "Incorrect email or password. Please try again.";
+            }
+        } else {
+            // hCaptcha verification failed
+            echo "hCaptcha verification failed. Please try again.";
+        }
+    } else {
+        echo "Please complete the hCaptcha.";
+    }
+}
+
 if (isset($_SESSION["email"])) {
     switch ($_SESSION["role_user"]) {
         case "Administrateur":
@@ -10,45 +85,7 @@ if (isset($_SESSION["email"])) {
             header("Location: index.php");
             break;
         default:
-            session_destroy(); 
-    }
-}
-
-$con = mysqli_connect('localhost', 'root', '', 'motaz');
-if (!$con) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
-$email = "";
-if (isset($_POST['email'])) {
-    $email = mysqli_real_escape_string($con, $_POST["email"]);
-    $password = md5($_POST["password_user"]); 
-
-   
-    $stmt = $con->prepare("SELECT * FROM users WHERE Email = ? AND password = ?");
-    $stmt->bind_param("ss", $email, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $_SESSION['email'] = $email;
-        while ($row = $result->fetch_assoc()) {
-            $_SESSION['nom_prenom_user'] = $row['Nom'] . " " . $row['Prenom'];
-            $_SESSION['email'] = $row['Email'];
-            $_SESSION['tel_user'] = $row['Num_tel'];
-            $_SESSION['id_user'] = $row['Id_user'];
-            $_SESSION['role_user'] = $row['Role'];
-            $_SESSION['img'] = $row['img'];
-        }
-
-        if ($_SESSION["role_user"] == "Administrateur") {
-            header("Location: ../Back_Office/afficherUtilisateurs.php");
-        } else if ($_SESSION["role_user"] == "User") {
-            header("Location: index.php");
-        }
-        exit();
-    } else {
-        echo "Incorrect email or password. Please try again.";
+            session_destroy(); // Handle unexpected roles
     }
 }
 ?>
@@ -317,6 +354,7 @@ if (isset($_POST['email'])) {
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -401,31 +439,41 @@ if (isset($_POST['email'])) {
 <!-- Navbar End -->
 
 
-    <main>
-        <div class="login-card">
-            <div class="login-header">
-                <h2>Welcome back</h2>
-                <p>Please enter your credentials to continue</p>
+<main>
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Welcome back</h2>
+            <p>Please enter your credentials to continue</p>
+        </div>
+
+        <form method="POST" action="login.php">
+            <div class="form-group">
+                <label class="form-label">Email address</label>
+                <input type="email" name="email" class="form-input" placeholder="Enter your email" required>
             </div>
 
-            <form method="POST" action="login.php">
-                <div class="form-group">
-                    <label class="form-label">Email address</label>
-                    <input type="email" name="email" class="form-input" placeholder="Enter your email" required>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password_user" class="form-input" placeholder="Enter your password" required>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password_user" class="form-input" placeholder="Enter your password" required>
-                </div>
+            <div class="form-group">
+                <!-- hCaptcha Widget -->
+                <div class="h-captcha" data-sitekey="daae15a2-d8c8-47b2-a21a-8c828fe87a38"></div>
+            </div>
 
-                <div class="form-footer">
+            <div class="form-footer">
                 <div class="form-group">
-                  <a href="forgotpassword.php" class="forgot-password-link">Forgot Password?</a>
-                  </div>
+                    <a href="forgotpassword.php" class="forgot-password-link">Forgot Password?</a>
                 </div>
+            </div>
 
-                <button type="submit" class="submit-btn">Log in</button>
+            <button type="submit" class="submit-btn">Log in</button>
+        </form>
+    </div>
+</main>
+
+                
             </form>
         </div>
     </main>
