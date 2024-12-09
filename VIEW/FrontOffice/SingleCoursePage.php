@@ -3,27 +3,38 @@ session_start();
 require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 
 try {
-    $db = config::getConnexion();
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    if (isset($_GET['course_id'])) {
+        $course_id = $_GET['course_id'];
 
-    // Fetch courses and their categories
-    $courseSql = "SELECT course.id_form, course.nom_form, course.description, course.price, 
-                         category.name AS category_name, course.thumbnail_path, category.CategoryID
-                  FROM course 
-                  LEFT JOIN category ON course.category_id = category.CategoryID";
-    $courseQuery = $db->prepare($courseSql);
-    $courseQuery->execute();
-    $courses = $courseQuery->fetchAll(PDO::FETCH_ASSOC);
+        
+        $db = config::getConnexion();
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Fetch categories
-    $categorySql = "SELECT CategoryID, name, description, thumbnail FROM category";
-    $categoryQuery = $db->prepare($categorySql);
-    $categoryQuery->execute();
-    $categories = $categoryQuery->fetchAll(PDO::FETCH_ASSOC);
+        
+        $courseSql = "SELECT course.id_form, course.nom_form, course.description, course.price, 
+                             course.thumbnail_path, category.name AS category_name
+                      FROM course 
+                      LEFT JOIN category ON course.category_id = category.CategoryID
+                      WHERE course.id_form = :course_id";
+        $courseQuery = $db->prepare($courseSql);
+        $courseQuery->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+        $courseQuery->execute();
+
+        
+        $course = $courseQuery->fetch(PDO::FETCH_ASSOC);
+
+        
+        if (!$course) {
+            $_SESSION['message'] = 'Course not found.';
+        }
+    } else {
+        $_SESSION['message'] = 'No course ID provided.';
+        
+    }
 } catch (Exception $e) {
     $_SESSION['message'] = 'Error fetching data: ' . $e->getMessage();
-    $courses = [];
-    $categories = [];
+    $course = null;
 }
 ?>
 
@@ -59,7 +70,7 @@ try {
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/StyleSingleCourse.css" rel="stylesheet">
 </head>
 
 <body>
@@ -101,100 +112,63 @@ try {
     <!-- Navbar End -->
 
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-primary py-5 mb-5 page-header">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Courses</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-center">
-                            <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Courses</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Header End -->
+    
 
 
-    <!-- Categories Start -->
-<div class="container-xxl py-5 category">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Categories</h6>
-            <h1 class="mb-5">Courses Categories</h1>
-        </div>
-        <div class="row g-3">
-            <?php foreach ($categories as $category): ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="wow zoomIn" data-wow-delay="0.1s">
-                        <a class="position-relative d-block overflow-hidden" href="#">
-                            <img class="img-fluid" src="<?php echo htmlspecialchars($category['thumbnail']); ?>" alt="<?= htmlspecialchars($category['name']); ?>">
-                            <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                <h5 class="m-0"><?= htmlspecialchars($category['name']); ?></h5>
-                                <small class="text-primary">
-                                    <!-- Count the number of courses in this category -->
-                                    <?php 
-                                        $categoryCourses = array_filter($courses, function($course) use ($category) {
-                                            return $course['CategoryID'] == $category['CategoryID'];
-                                        });
-                                        echo count($categoryCourses);
-                                    ?> Courses
-                                </small>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</div>
-<!-- Categories End -->
 
 
 
     <!-- Courses Start -->
-    <div class="container-xxl py-5">
+<div class="container-xxl py-5">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
-            <h1 class="mb-5">Popular Courses</h1>
+            <h6 class="section-title bg-white text-center text-primary px-3">Course</h6>
         </div>
         <div class="row g-4 justify-content-center">
-            <?php if (!empty($courses)): ?>
-                <?php foreach ($courses as $course): ?>
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="course-item bg-light">
-                            <div class="position-relative overflow-hidden">
-                                <img class="img-fluid" src="<?php echo htmlspecialchars($course['thumbnail_path']); ?>" alt="">
-                                <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="SingleCoursePage.php?course_id=<?php echo $course['id_form']; ?>" 
-   class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" 
-   style="border-radius: 30px 30px;">Read More</a>
+            <!-- Display Course Item -->
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="course-item bg-light">
+                    <div class="position-relative overflow-hidden">
+                        <!-- Use the course's thumbnail image from the database -->
+                        <img class="img-fluid" src="<?php echo htmlspecialchars($course['thumbnail_path']); ?>" alt="Course Image">
+                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
+                            <!-- Link to course page -->
+                            <form action="PayCourse.php" method="POST" class="d-inline">
+    <input type="hidden" name="course_id" value="<?php echo $course['id_form']; ?>">
+    <button type="submit" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 30px 30px;">
+        Join Now
+    </button>
+</form>
 
-                                </div>
-                            </div>
-                            <div class="text-center p-4 pb-0">
-                                <h3 class="mb-0">$<?php echo htmlspecialchars($course['price']); ?></h3>
-                                <h5 class="mb-4"><?php echo htmlspecialchars($course['nom_form']); ?></h5>
-                                <p><?php echo htmlspecialchars($course['description']); ?></p>
-                                <small class="text-muted">Category: <?php echo htmlspecialchars($course['category_name']); ?></small>
-                            </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-center">No courses available at the moment.</p>
-            <?php endif; ?>
+                    <div class="text-center p-4 pb-0">
+                        <!-- Display the course price -->
+                        <h3 class="mb-0"><?php echo htmlspecialchars('$' . $course['price']); ?></h3>
+                        <div class="mb-3">
+                            <!-- Display the star ratings -->
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small>(123)</small>
+                        </div>
+                        <!-- Display course name -->
+                        <h5 class="mb-4"><?php echo htmlspecialchars($course['nom_form']); ?></h5>
+                    </div>
+                    <div class="d-flex border-top">
+                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>John Doe</small>
+                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
+                        <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30 Students</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<!-- Courses End -->
 
-    <!-- Courses End -->
 
 
     <!-- Testimonial Start -->

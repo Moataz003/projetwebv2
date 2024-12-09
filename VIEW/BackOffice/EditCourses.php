@@ -5,7 +5,7 @@ require_once 'C:\xampp\htdocs\ProjetWeb\config.php';
 // Fetch all courses for the dropdown menu
 try {
     $db = config::getConnexion();
-    $sql = "SELECT id_form, nom_form FROM course"; // Fetch course ID and name
+    $sql = "SELECT id_form, nom_form FROM course";
     $query = $db->prepare($sql);
     $query->execute();
     $courses = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     $price = $_POST['price'];
     $description = htmlspecialchars($_POST['description']);
     $categoryID = $_POST['category']; // Selected category ID
-    $filePath = '';
+    $filePath = NULL;
 
     // Check if a file is uploaded
-    if (isset($_FILES['file']['name']) && $_FILES['file']['error'] == 0) {
+    if (isset($_FILES['file']['name']) && $_FILES['file']['error'] == UPLOAD_ERR_OK) {
         // Define allowed file types
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
 
@@ -34,11 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
         $fileType = $_FILES['file']['type'];
         $fileSize = $_FILES['file']['size'];
 
-        // Validate file type and size (for example, max size of 2MB)
+        // Validate file type and size (max size of 2MB)
         if (in_array($fileType, $allowedTypes) && $fileSize <= 2 * 1024 * 1024) {
             // Generate a unique file name to avoid conflicts
-            $fileNameNew = uniqid('', true) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
-            $filePath = 'uploads/' . $fileNameNew;
+            $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+            $fileNameNew = uniqid('thumbnail_', true) . '.' . $fileExtension;
+            $uploadDir = 'C:/xampp/htdocs/ProjetWeb/VIEW/CoursesThumbnail/';
+
+            // Ensure the directory exists
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $filePath = $uploadDir . $fileNameNew;
 
             // Move the uploaded file to the desired folder
             if (!move_uploaded_file($fileTmpName, $filePath)) {
@@ -46,6 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
                 header("Location: EditCourses.php?id=" . $courseID);
                 exit;
             }
+
+            // Store the full path for the database (prepend /projetweb/)
+            $filePathForDB = '/projetweb/' . 'VIEW/CoursesThumbnail/' . $fileNameNew;
         } else {
             $_SESSION['message'] = 'Invalid file type or file size too large.';
             header("Location: EditCourses.php?id=" . $courseID);
@@ -63,18 +74,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
                     SET nom_form = :courseName, 
                         price = :price, 
                         description = :description,
-                        category_id = :categoryID,
-                        file_path = :filePath
-                    WHERE id_form = :courseID";
-            $query = $db->prepare($sql);
-            $query->execute([
+                        category_id = :categoryID" . 
+                    ($filePathForDB ? ", thumbnail_path = :filePath" : "") . 
+                    " WHERE id_form = :courseID";
+
+            $params = [
                 ':courseName' => $courseName,
                 ':price' => $price,
                 ':description' => $description,
                 ':categoryID' => $categoryID,
-                ':filePath' => $filePath,
                 ':courseID' => $courseID
-            ]);
+            ];
+
+            // Add the file path if a file was uploaded
+            if ($filePathForDB) {
+                $params[':filePath'] = $filePathForDB;
+            }
+
+            $query = $db->prepare($sql);
+            $query->execute($params);
 
             // Set success message and redirect to ManageCourses.php
             $_SESSION['message'] = 'Course updated successfully.';
@@ -91,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 // Fetch categories for the dropdown menu
 try {
     $db = config::getConnexion();
-    $sql = "SELECT CategoryID, name FROM category"; // Fetch categories
+    $sql = "SELECT CategoryID, name FROM category";
     $query = $db->prepare($sql);
     $query->execute();
     $categories = $query->fetchAll();
@@ -105,7 +123,7 @@ if (isset($_GET['id'])) { // 'id' is passed in the query string
     $courseID = $_GET['id'];
 
     try {
-        $sql = "SELECT * FROM course WHERE id_form = :courseID"; // Use 'id_form' to fetch the course
+        $sql = "SELECT * FROM course WHERE id_form = :courseID";
         $query = $db->prepare($sql);
         $query->execute([':courseID' => $courseID]);
         $course = $query->fetch(PDO::FETCH_ASSOC);
@@ -153,7 +171,7 @@ if (isset($_GET['id'])) { // 'id' is passed in the query string
                             <option value="" disabled selected>Select a course</option>
                             <?php foreach ($courses as $courseOption): ?>
                                 <option value="<?= $courseOption['id_form'] ?>" 
-                                    <?= isset($courseID) && $courseID == $courseOption['id_form'] ? 'selected' : '' ?>>
+                                    <?= isset($courseID) && $courseID == $courseOption['id_form'] ? 'selected' : '' ?> >
                                     <?= htmlspecialchars($courseOption['nom_form']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -194,16 +212,13 @@ if (isset($_GET['id'])) { // 'id' is passed in the query string
                         <label for="price">Price ($):</label>
                         <input type="number" id="price" name="price" 
                                value="<?= isset($course) ? htmlspecialchars($course['price']) : '' ?>" 
-                               placeholder="Enter course price" min="0" step="0.01" required>
+                               placeholder="Enter course price" min="0" required>
                     </div>
 
-                    <!-- File Upload -->
+                    <!-- Thumbnail Upload -->
                     <div class="form-group">
-                        <label for="file">Upload File:</label>
-                        <input type="file" id="file" name="file" accept="image/*,application/pdf">
-                        <?php if (isset($course['file_path']) && !empty($course['file_path'])): ?>
-                            <p>Current File: <a href="<?= $course['file_path'] ?>" target="_blank">View File</a></p>
-                        <?php endif; ?>
+                        <label for="file">Course Thumbnail:</label>
+                        <input type="file" id="file" name="file" accept="image/jpeg, image/png, image/gif, application/pdf">
                     </div>
 
                     <!-- Submit Button -->
@@ -214,12 +229,5 @@ if (isset($_GET['id'])) { // 'id' is passed in the query string
             </div>
         </main>
     </div>
-
-    <?php if (isset($_SESSION['message'])): ?>
-        <script>
-            window.alert("<?= $_SESSION['message'] ?>");
-        </script>
-        <?php unset($_SESSION['message']); ?>
-    <?php endif; ?>
 </body>
 </html>
