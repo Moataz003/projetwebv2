@@ -15,44 +15,7 @@
 <body>
 
     <b class="screen-overlay"></b>
-	<header class="main-header navbar">
-	<div class="col-search">
-		<form class="searchform">
-			<div class="input-group">
-			  <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-			  <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i> </button>
-			</div>
-			<datalist id="search_terms">
-			  <option value="Products">
-			  <option value="New orders">
-			  <option value="Apple iphone">
-			  <option value="Ahmed Hassan">
-			</datalist>
-		</form>
-	</div>
-	<div class="col-nav">
-     <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="md-28 material-icons md-menu"></i> </button>
-	 	<ul class="nav">
-	      <li class="nav-item">
-	          <a class="nav-link btn-icon" onclick="darkmode(this)" title="Dark mode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-	      </li>
-	      <li class="nav-item">
-	        <a class="nav-link btn-icon" href="#"> <i class="material-icons md-notifications_active"></i> </a>
-	      </li>
-	      <li class="nav-item">
-	        <a class="nav-link" href="#"> English </a>
-	      </li>
-	      <li class="dropdown nav-item">
-	        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"> <img class="img-xs rounded-circle" src="images/people/avatar1.jpg" alt="User"></a>
-	        <div class="dropdown-menu dropdown-menu-end">
-	          <a class="dropdown-item" href="#">My profile</a>
-	          <a class="dropdown-item" href="#">Settings</a>
-	          <a class="dropdown-item text-danger" href="#">Exit</a>
-	        </div>
-	      </li>
-	    </ul> 
-  	</div>
-</header>
+
 
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
@@ -80,8 +43,6 @@
                     <div class="submenu">
                         <a href="javascript:void(0);" id="add-quiz">Ajouter Quiz</a>
                         <a href="javascript:void(0);" id="list-quiz">Afficher Quiz</a>
-                        <a href="javascript:void(0);" id="update-quiz">Modifier Quiz</a>
-                        <a href="javascript:void(0);" id="delete-quiz">Supprimer Quiz</a>
                     </div>
                 </li>
                 <li class="menu-item"> 
@@ -118,6 +79,44 @@
     </aside>
 
     <main class="main-wrap">
+    <header class="main-header navbar">
+	<div class="col-search">
+		<form class="searchform">
+			<div class="input-group">
+			  <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+			  <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i> </button>
+			</div>
+			<datalist id="search_terms">
+			  <option value="Products">
+			  <option value="New orders">
+			  <option value="Apple iphone">
+			  <option value="Ahmed Hassan">
+			</datalist>
+		</form>
+	</div>
+	<div class="col-nav">
+     <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="md-28 material-icons md-menu"></i> </button>
+	 	<ul class="nav">
+	      <li class="nav-item">
+	          <a class="nav-link btn-icon" onclick="darkmode(this)" title="Dark mode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link btn-icon" href="#"> <i class="material-icons md-notifications_active"></i> </a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="#"> English </a>
+	      </li>
+	      <li class="dropdown nav-item">
+	        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#"> <img class="img-xs rounded-circle" src="images/people/avatar1.jpg" alt="User"></a>
+	        <div class="dropdown-menu dropdown-menu-end">
+	          <a class="dropdown-item" href="#">My profile</a>
+	          <a class="dropdown-item" href="#">Settings</a>
+	          <a class="dropdown-item text-danger" href="#">Exit</a>
+	        </div>
+	      </li>
+	    </ul> 
+  	</div>
+    </header>
         <!-- Dynamically loaded content will appear here -->
         <div id="dynamic-content"></div>
     </main>
@@ -220,15 +219,7 @@ function loadQuizData(quizId) {
                 $("#dynamic-content").load("../listQuiz.php"); // Load listQuiz.php content dynamically
             });
 
-            // Load the "Modifier Quiz" content when the corresponding menu item is clicked
-            $("#update-quiz").click(function() {
-                $("#dynamic-content").load("../updateQuiz.php"); // Load updateQuiz.php content dynamically
-            });
-
-            // Load the "Supprimer Quiz" content when the corresponding menu item is clicked
-            $("#delete-quiz").click(function() {
-                $("#dynamic-content").load("../deleteQuiz.php"); // Load deleteQuiz.php content dynamically
-            });
+            
         });
     </script>
 
