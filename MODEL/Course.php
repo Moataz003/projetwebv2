@@ -38,5 +38,5 @@ class Course {
         $this->categoryId = $categoryId;
     }
 
-    // ... other getters and setters
+
 }

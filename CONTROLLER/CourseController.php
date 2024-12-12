@@ -3,6 +3,7 @@ require_once './config.php';
 require_once './MODEL/Course.php';
 require_once './MODEL/Category.php';
 
+
 class CourseController {
     public function addCourse(Course $course)
     {
