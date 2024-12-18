@@ -1,0 +1,19 @@
+<form id="registrationForm" onsubmit="return validateForm();"  action="http://localhost/MajdBenAbdallah/model/handle_join_request.php" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+    <span id="nameError" style="color:red;"></span><br>
+
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname">
+    <span id="surnameError" style="color:red;"></span><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email">
+    <span id="emailError" style="color:red;"></span><br>
+
+    <label for="contact">Contact:</label>
+    <input type="text" id="contact" name="contact">
+    <span id="contactError" style="color:red;"></span><br>
+
+    <button type="submit">Submit</button>
+    </form>
