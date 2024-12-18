@@ -137,28 +137,45 @@ if (
     </div> <!-- aside-top.// -->
 
     <nav>
-      <ul class="menu-aside">
-        <li class="menu-item active">
-          <a class="menu-link" href="index.php"> <i class="icon material-icons md-home"></i>
-            <span class="text">Acceuil</span>
-          </a>
-        </li>
-        <li class="menu-item has-submenu">
-          <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-            <span class="text">Utilisateurs</span>
-          </a>
-          <div class="submenu">
-            <a href="ajouterUtilisateurs.php">Ajouter Utilisateurs</a>
-            <a href="modifierUtilisateurs.php">Modifier Utilisateurs</a>
-            <a href="supprimerUtilisateurs.php">Supprimer Utilisateurs</a>
-            <a href="afficherUtilisateurs.php">Afficher Utilisateurs</a>
-            
-          </div>
-        </li>
-      </ul>
-      <br>
-      <br>
-    </nav>
+  <ul class="menu-aside">
+    <li class="menu-item active"> 
+      <a class="menu-link" href="index.php"> <i class="icon material-icons md-home"></i> 
+        <span class="text">Acceuil</span> 
+      </a> 
+    </li>
+   
+   
+    
+	
+    
+   
+ 
+    <li class="menu-item has-submenu"> 
+      <a class="menu-link" href="afficherUtilisateurs.php"> <i class="icon material-icons md-person"></i>  
+        <span class="text">Utilisateurs</span> 
+      </a> 
+	  <div class="submenu">
+    <a href="ajouterUtilisateurs.php">Ajouter Utilisateurs</a>
+        <a href="modifierUtilisateurs.php">Modifier Utilisateurs</a>
+        <a href="supprimerUtilisateurs.php">Supprimer Utilisateurs</a>
+        <a href="search.php">Rechercher</a>
+       
+		</div>
+		</li>
+
+    <li class="menu-item "> 
+        <a class="menu-link" href="tri.php"> <i class="icon material-icons md-sort"></i> 
+          <span class="text">Trier Utilisateurs</span> 
+        </a> 
+      </li>
+    
+   
+  </ul>
+  <hr>
+ 
+  <br>
+  <br>
+</nav>
   </aside>
   <main class="main-wrap">
 

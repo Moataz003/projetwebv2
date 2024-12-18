@@ -10,7 +10,7 @@ session_start();
 		header("location:../frontoffice/index.php") ; 
 	}*/
 
-
+  require('C:\xampp\htdocs\Motaz\fpdf186\fpdf.php');
 	include '../../Controller/UtilisateursU.php';
 	include_once "C:/xampp/htdocs/Motaz/config.php";
 	$UtilisateursU=new UtilisateursU();
@@ -71,12 +71,19 @@ session_start();
         <span class="text">Utilisateurs</span> 
       </a> 
 	  <div class="submenu">
-        <a href="ajouterUtilisateurs.php">Ajouter Utilisateurs</a>
+    <a href="ajouterUtilisateurs.php">Ajouter Utilisateurs</a>
         <a href="modifierUtilisateurs.php">Modifier Utilisateurs</a>
         <a href="supprimerUtilisateurs.php">Supprimer Utilisateurs</a>
+        <a href="search.php">Rechercher</a>
        
 		</div>
 		</li>
+
+    <li class="menu-item "> 
+        <a class="menu-link" href="tri.php"> <i class="icon material-icons md-sort"></i> 
+          <span class="text">Trier Utilisateurs</span> 
+        </a> 
+      </li>
     
    
   </ul>
@@ -140,6 +147,10 @@ session_start();
                                     <div class="card-body">
                                         <div class="card-title">
 	  <a href="ajouterUtilisateurs.php">  <button type="button" class="btn btn-primary"  style="margin-top:3%;margin-left:5%;border-radius: 10%;">Ajouter</button></a>
+
+    <a href="generate_pdf.php" target="_blank">
+    <button type="button" class="btn btn-success" style="margin-top:3%;margin-left:5%;border-radius: 10%;">Générer PDF</button>
+</a>
 		<center><h1>Liste des Utilisateurs</h1></center>
 		<br>
 		<br>
